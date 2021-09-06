@@ -11,8 +11,18 @@
 
 const httpError = require('http-errors');
 
+const service = require('./building.service');
+const classroomModel = require('../../models/classroom.model');
 
-exports.updateBuilding = (req, res, next) => {}
+exports.updateBuilding = async (req, res, next) => {
+  const { buildingId, className } = req.body;
+  const classroomId = classroomModel.findOne({name: className});
+  
+  const updatedBuilding = await service.update(buildingId, { $push: { classrooms: classroomId }});
+  return res.json(updatedBuilding);
+}
 
-
-exports.getAllBuildingWithClassrooms = () => {};
+exports.getAllBuildingWithClassrooms = async (req, res, next) => {
+  const buildings = await service.getAll();
+  return res.json(buildings);
+};
